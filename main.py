@@ -22,7 +22,7 @@ def validar(transiciones, cad, edo, index, caracteres_validos, i, rama, transici
                             #print(f'Estado actual: {edo}')  # Imprimimos estado
                             #print(f'Transicion con epsilon: {(transiciones[i])}')
                             ej = rama + ' -> ' + (transiciones[i])[2]
-                            estados.append(validar(transiciones, cad, (transiciones[i])[2], index, caracteres_validos, 0, rama+' -> ' + (transiciones[i])[2], transiciones[i],estados_de_aceptacion))
+                            estados.append(validar(transiciones, cad, (transiciones[i])[2], index, caracteres_validos, 0, ej, transiciones[i],estados_de_aceptacion))
                         #print(f'rama: {ej}')
                         else:
                             continue
@@ -31,7 +31,7 @@ def validar(transiciones, cad, edo, index, caracteres_validos, i, rama, transici
                         #print(f'Estado actual: {edo}')  # Imprimimos estado
                         #print(f'Transicion : {(transiciones[i])}')
                         ej = rama + ' -> ' + (transiciones[i])[2]
-                        estados.append(validar(transiciones, cad, (transiciones[i])[2], index+1, caracteres_validos, 0, rama+' -> ' + (transiciones[i])[2], transiciones[i],estados_de_aceptacion))
+                        estados.append(validar(transiciones, cad, (transiciones[i])[2], index+1, caracteres_validos, 0, ej, transiciones[i],estados_de_aceptacion))
                     #print(f'rama: {ej}\n')
                 i += 1 # iteramos  a la siguiente transicion 
             return estados
@@ -86,6 +86,7 @@ for caracter in mensaje:
         x = x+caracter
     else:
         EdosAceptacion.append(x)
+        x = ''
 if x != '':
     EdosAceptacion.append(x)
 
@@ -111,7 +112,7 @@ while(mensaje): # Si el resultado de intentar leer es exitoso, analizamos la lin
 f.close() # Cerramos el archivo
 
 #print(f'\u03A3: {Sigma}') #Mostramos transiciones 
-#print(f'EdosAceptacion: {EdosAceptacion}') #Mostramos transiciones 
+print(f'EdosAceptacion: {EdosAceptacion}') #Mostramos transiciones 
 #print(f'EdoInicial: {EdoInicial}') #Mostramos transiciones 
 
 Estado_final = funcion(Sigma, input("Introduzca cadena: "), Epsilon, EdoInicial, EdosAceptacion) #Pedimos la cadena y Comenzamos el analisis de la cadena con el automata 
