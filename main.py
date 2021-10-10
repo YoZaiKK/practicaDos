@@ -1,47 +1,54 @@
-def funcion(transiciones, cadena, caracteres_validos, edo):  # Recibimos parametros
-    edo = validar(transiciones, cadena, edo, 0, caracteres_validos, 0, '-> '+edo)
+def funcion(transiciones, cadena, caracteres_validos, edo,estados_de_aceptacion):  # Recibimos parametros
+    edo = validar(transiciones, cadena, edo, 0, caracteres_validos, 0, '-> '+edo, [],estados_de_aceptacion)
     return edo  # Retornamos estado final
 
 
-def validar(transiciones, cad, edo, index, caracteres_validos, i, rama):
+def validar(transiciones, cad, edo, index, caracteres_validos, i, rama, transicion_epsilon,estados_de_aceptacion):
     # print('Entrando en funcion')
     # i = 0 ' -> '
     if index < len(cad):  # Si el indice aun corresponde a la cadena dada procedemos
-        print(f'\ni = {i}')
-        print(f'index = {index}')
+        #print(f'\ni = {i}')
+        #print(f'index = {index}')
         # Si el caracter en seleccionado es parte de los caracteres validos procedemos
         if cad[index] in caracteres_validos:
             estados = []  # Lista que se retornará
+            ej = ''
             while i < len(transiciones):  # Recorremos las transiciones
                 # Si se reconoce el estado se evalua la transicion
                 if ((transiciones[i]))[0] == edo:
                     # Si la transicion es con epsilon transicionamos sin cambiar de caracter
                     if (transiciones[i])[1] == 'E':
-                        print(f'Estado actual: {edo}')  # Imprimimos estado
-                        print(f'Transicion con epsilon: {(transiciones[i])}')
-                        ej = rama + ' -> ' + (transiciones[i])[2]
-                        print(f'rama: {ej}')
-                        estados.append(validar(transiciones, cad, (transiciones[i])[2], index, caracteres_validos, i+1, rama+' -> ' + (transiciones[i])[2]))
+                        if transiciones[i] != transicion_epsilon:
+                            #print(f'Estado actual: {edo}')  # Imprimimos estado
+                            #print(f'Transicion con epsilon: {(transiciones[i])}')
+                            ej = rama + ' -> ' + (transiciones[i])[2]
+                            estados.append(validar(transiciones, cad, (transiciones[i])[2], index, caracteres_validos, 0, rama+' -> ' + (transiciones[i])[2], transiciones[i],estados_de_aceptacion))
+                        #print(f'rama: {ej}')
+                        else:
+                            continue
                     # Si no es  epsilon y el caracter en la transicion corresponde al evaluado de la cadena hacmos transicion al estado siguiente con el sig caracter
                     elif cad[index] == (transiciones[i])[1]: 
-                        print(f'Estado actual: {edo}')  # Imprimimos estado
-                        print(f'Transicion : {(transiciones[i])}')
+                        #print(f'Estado actual: {edo}')  # Imprimimos estado
+                        #print(f'Transicion : {(transiciones[i])}')
                         ej = rama + ' -> ' + (transiciones[i])[2]
-                        print(f'rama: {ej}\n')
-                        estados.append(validar(transiciones, cad, (transiciones[i])[2], index+1, caracteres_validos, 0, rama+' -> ' + (transiciones[i])[2]))
+                        estados.append(validar(transiciones, cad, (transiciones[i])[2], index+1, caracteres_validos, 0, rama+' -> ' + (transiciones[i])[2], transiciones[i],estados_de_aceptacion))
+                    #print(f'rama: {ej}\n')
                 i += 1 # iteramos  a la siguiente transicion 
             return estados
         else:
-            return validar(transiciones, cad, edo, index+1, caracteres_validos, 0, rama)
+            return validar(transiciones, cad, edo, index+1, caracteres_validos, 0, rama, [],estados_de_aceptacion)
     else:
+        camino_valido(edo, rama, estados_de_aceptacion)
         return edo
 
-def hay_estado():
-    print('No sabemos')
-    if 'si':
-        return True
+def camino_valido(estado, rama, estados_de_aceptacion):
+    if estado in estados_de_aceptacion:
+        print(chr(27)+"[0;32m"+"Cadena valida para el camino: "+rama)
+        print("\033[0;36m"+"")
     else:
-        return False
+        print("\033[0;36m"+"Cadena no validapara el camino: "+rama+'\n')
+
+print("\033[0;36m"+"")
     
 # leer arcchivo txt
 entrada = input("Introduce el nombre del archivo a leer en la carpeta, sin espasios y con la extencion (Ejemplo: 1.txt): ")
@@ -73,9 +80,14 @@ for caracter in mensaje:
 
 # Metemos los estados finales a nuestra lista de estadosFinales
 mensaje = f.readline()
+x = ''
 for caracter in mensaje:
     if caracter != ',' and caracter != '\n':
-        EdosAceptacion.append(caracter)
+        x = x+caracter
+    else:
+        EdosAceptacion.append(x)
+if x != '':
+    EdosAceptacion.append(x)
 
 # Sigue sigma UTF-8 = "\u03A3"
 
@@ -98,7 +110,9 @@ while(mensaje): # Si el resultado de intentar leer es exitoso, analizamos la lin
 
 f.close() # Cerramos el archivo
 
-print(f'\u03A3: {Sigma}') #Mostramos transiciones 
+#print(f'\u03A3: {Sigma}') #Mostramos transiciones 
+#print(f'EdosAceptacion: {EdosAceptacion}') #Mostramos transiciones 
+#print(f'EdoInicial: {EdoInicial}') #Mostramos transiciones 
 
-Estado_final = funcion(Sigma, input("Introduzca cadena: "), Epsilon, EdoInicial) #Pedimos la cadena y Comenzamos el analisis de la cadena con el automata 
-print(f'Estados finales:\n{Estado_final}') #Mostramos estados finales 
+Estado_final = funcion(Sigma, input("Introduzca cadena: "), Epsilon, EdoInicial, EdosAceptacion) #Pedimos la cadena y Comenzamos el analisis de la cadena con el automata 
+#print(f'Estados finales:\n{Estado_final}') #Mostramos estados finales 
