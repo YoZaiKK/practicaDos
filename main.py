@@ -112,7 +112,7 @@ while(mensaje): # Si el resultado de intentar leer es exitoso, analizamos la lin
 f.close() # Cerramos el archivo
 
 #print(f'\u03A3: {Sigma}') #Mostramos transiciones 
-print(f'EdosAceptacion: {EdosAceptacion}') #Mostramos transiciones 
+#print(f'EdosAceptacion: {EdosAceptacion}') #Mostramos transiciones 
 #print(f'EdoInicial: {EdoInicial}') #Mostramos transiciones 
 
 Estado_final = funcion(Sigma, input("Introduzca cadena: "), Epsilon, EdoInicial, EdosAceptacion) #Pedimos la cadena y Comenzamos el analisis de la cadena con el automata 
